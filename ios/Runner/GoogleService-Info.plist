@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>709176148027-npg6le6103k03njk3bl2foocovenfr7b.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.709176148027-npg6le6103k03njk3bl2foocovenfr7b</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>709176148027-ivlqfp6k8jm5b66nur4s3qb2e3103tj9.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDPmyvSFP5JAuZaMYPoEvLDdEl9O7UuAQI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>709176148027</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.cashhub</string>
+	<key>PROJECT_ID</key>
+	<string>cashhub-5a2f1</string>
+	<key>STORAGE_BUCKET</key>
+	<string>cashhub-5a2f1.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:709176148027:ios:f51c9c3562cef290ef9c1e</string>
+	<key>DATABASE_URL</key>
+	<string>https://cashhub-5a2f1.firebaseio.com</string>
+</dict>
+</plist>

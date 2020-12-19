@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "709176148027",
+    "firebase_url": "https://cashhub-5a2f1.firebaseio.com",
+    "project_id": "cashhub-5a2f1",
+    "storage_bucket": "cashhub-5a2f1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709176148027:android:50b5f610b22fe4a2ef9c1e",
+        "android_client_info": {
+          "package_name": "com.example.cashhub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "709176148027-ivlqfp6k8jm5b66nur4s3qb2e3103tj9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cashhub",
+            "certificate_hash": "aff692cbe1afbd0403d0c67cf83eb15b2ba505c5"
+          }
+        },
+        {
+          "client_id": "709176148027-a9htdcpl40cf64o1bd5cpkin5h0jna55.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUIpzLZqebaVtfvlkfyhh-OS4QOvxx7pY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "709176148027-a9htdcpl40cf64o1bd5cpkin5h0jna55.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
