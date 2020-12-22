@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:cashhub/services/datasentService.dart';
@@ -14,6 +16,7 @@ class details extends StatefulWidget {
 
 class _detailsState extends State<details> {
   Map data = {};
+  double TDiscount=0.0;
 
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   DatasentService _datasentService;
@@ -40,7 +43,7 @@ class _detailsState extends State<details> {
         'Total':data['Total'],
         'userId':intValue,
         'items':data['items'].toList(),
-        'discount':'5',
+        'discount':TDiscount.toString(),
         'BlobImage':blobimg,
         'blogname':data['imagename'],
 
@@ -60,6 +63,7 @@ class _detailsState extends State<details> {
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1
       );
+      Navigator.of(_keyLoader.currentContext,rootNavigator: true).pop();
     }
   }
 
@@ -94,7 +98,15 @@ class _detailsState extends State<details> {
   @override
   Widget build(BuildContext context) {
     data = ModalRoute.of(context).settings.arguments;
+for(int j=0;j<data['items'].length;j++){
 
+  if(data['items'][j].discount.toString()!=""){
+    var dd=double.parse(data['items'][j].discount.toString());
+    // Tdds+=dd;
+    TDiscount +=dd;
+  }
+
+}
 
     return Scaffold(
       appBar: AppBar(
@@ -216,6 +228,27 @@ class _detailsState extends State<details> {
                       ],
                     ),
                     SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Discount',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 19,
+                              fontWeight: FontWeight.bold,
+                            )),
+                        Text("\$"+
+                            TDiscount.toString(),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 19,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -237,6 +270,7 @@ class _detailsState extends State<details> {
                         ),
                       ],
                     ),
+
                     SizedBox(height: 30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -262,6 +296,7 @@ class _detailsState extends State<details> {
                               fontWeight: FontWeight.bold,
                             ),
                             textAlign: TextAlign.right),
+
                       ],
                     ),
 
@@ -279,7 +314,7 @@ class _detailsState extends State<details> {
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child:
-                                    Text(data['items'][i].itemname.toString(),
+                                    Text(data['items'][i].itemName.toString(),
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 19,
@@ -304,7 +339,7 @@ class _detailsState extends State<details> {
                                   child: Align(
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                        "\$"+data['items'][i].price.toString(),
+                                        "\$"+data['items'][i].totalPrice.toString(),
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 19,

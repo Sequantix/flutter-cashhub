@@ -122,7 +122,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
     final http.Response response = await http.post(
-      'https://cashhub-dev-py-ocr.azurewebsites.net/apiupload',
+      'https://cashhub-test-ocrpy-last.azurewebsites.net/apiupload',
+      // 'https://cashhub-dev-py-ocr.azurewebsites.net/apiupload',
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -149,14 +150,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   checkimgStatus(){
 
-    if(_readerservice.status == "true"){
+    if(_readerservice.status == true){
       Navigator.of(_keyLoader.currentContext,rootNavigator: true).pop();
       Navigator.pushReplacementNamed(context, '/details',arguments: {
-        'CompanyName':(_readerservice.companyName).toString(),
-        'TDate':(_readerservice.transcationdate).toString(),
-        'Tax':(_readerservice.tax).toString(),
+        'CompanyName':(_readerservice.merchantName).toString(),
+        'TDate':(_readerservice.transactionDate).toString(),
+        'Tax':(_readerservice.totalTax).toString(),
         'Total':(_readerservice.total).toString(),
-        'items':(_readerservice.sku).toList(),
+        'items':(_readerservice.items).toList(),
         'imagess':_gotImage,
         'imagename':_gotImage.path.toString(),
       });

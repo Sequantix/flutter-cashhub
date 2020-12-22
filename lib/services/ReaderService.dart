@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final readerservice = readerserviceFromJson(jsonString);
-
 import 'dart:convert';
 
 Readerservice readerserviceFromJson(String str) => Readerservice.fromJson(json.decode(str));
@@ -10,60 +6,64 @@ String readerserviceToJson(Readerservice data) => json.encode(data.toJson());
 
 class Readerservice {
   Readerservice({
-    this.companyName,
-    this.transcationdate,
-    this.sku,
-    this.status,
-    this.tax,
+    this.items,
+    this.merchantName,
     this.total,
+    this.totalTax,
+    this.transactionDate,
+    this.status,
   });
 
-  String companyName;
-  String transcationdate;
-  List<Sku> sku;
-  String status;
-  String tax;
+  List<Item> items;
+  String merchantName;
   String total;
+  String totalTax;
+  String transactionDate;
+  bool status;
 
   factory Readerservice.fromJson(Map<String, dynamic> json) => Readerservice(
-    companyName: json["CompanyName"],
-    transcationdate: json["Transcationdate"],
-    sku: List<Sku>.from(json["sku"].map((x) => Sku.fromJson(x))),
+    items: List<Item>.from(json["Items"].map((x) => Item.fromJson(x))),
+    merchantName: json["Merchant Name"],
+    total: json["Total"],
+    totalTax: json["TotalTax"],
+    transactionDate: json["Transaction Date"],
     status: json["status"],
-    tax: json["tax"],
-    total: json["total"],
   );
 
   Map<String, dynamic> toJson() => {
-    "CompanyName": companyName,
-    "Transcationdate": transcationdate,
-    "sku": List<dynamic>.from(sku.map((x) => x.toJson())),
+    "Items": List<dynamic>.from(items.map((x) => x.toJson())),
+    "Merchant Name": merchantName,
+    "Total": total,
+    "TotalTax": totalTax,
+    "Transaction Date": transactionDate,
     "status": status,
-    "tax": tax,
-    "total": total,
   };
 }
 
-class Sku {
-  Sku({
-    this.itemname,
-    this.price,
+class Item {
+  Item({
+    this.discount,
+    this.itemName,
+    this.totalPrice,
     this.sku,
   });
 
-  String itemname;
-  String price;
+  String discount;
+  String itemName;
+  String totalPrice;
   String sku;
 
-  factory Sku.fromJson(Map<String, dynamic> json) => Sku(
-    itemname: json["itemname"],
-    price: json["price"],
+  factory Item.fromJson(Map<String, dynamic> json) => Item(
+    discount: json["Discount"],
+    itemName: json["ItemName"],
+    totalPrice: json["TotalPrice"],
     sku: json["sku"],
   );
 
   Map<String, dynamic> toJson() => {
-    "itemname": itemname,
-    "price": price,
+    "Discount": discount,
+    "ItemName": itemName,
+    "TotalPrice": totalPrice,
     "sku": sku,
   };
 }
