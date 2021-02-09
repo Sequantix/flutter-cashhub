@@ -43,27 +43,27 @@ class Readerservice {
 class Item {
   Item({
     this.discount,
-    this.itemName,
-    this.totalPrice,
+    this.itemname,
+    this.price,
     this.sku,
   });
 
   String discount;
-  String itemName;
-  String totalPrice;
+  String itemname;
+  String price;
   String sku;
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
     discount: json["Discount"],
-    itemName: json["ItemName"],
-    totalPrice: json["TotalPrice"],
+    itemname: json["itemname"],
+    price: json["price"],
     sku: json["sku"],
   );
 
   Map<String, dynamic> toJson() => {
     "Discount": discount,
-    "ItemName": itemName,
-    "TotalPrice": totalPrice,
+    "itemname": itemname,
+    "price": price,
     "sku": sku,
   };
 }

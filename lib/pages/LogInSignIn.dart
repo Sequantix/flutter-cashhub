@@ -107,15 +107,20 @@ class _LogInSignInState extends State<LogInSignIn>
     //print('hello');
     shardname();
   }
-
+shrdact()async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setInt('actid', _login.acount);
+}
   shardname()async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('UserName', (_login.name).toString());
+    prefs.setString('actidd', (_login.acount).toString());
     shardemil();
   }
   shardemil() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('UserEmails', (_login.uemail).toString());
+    shrdact();
   }
 
   checkloginstatus() {
@@ -340,6 +345,7 @@ class _LogInSignInState extends State<LogInSignIn>
     prefs.setString('userId', (_socialsignin.id).toString());
     prefs.setString('UserName', (_socialsignin.fullname).toString());
     prefs.setString('UserEmails', (_socialsignin.uemail).toString());
+    prefs.setString('actidd', (_socialsignin.account).toString());
     sosharId();
     Navigator.of(_keyLoader.currentContext, rootNavigator: true)
         .pop();
@@ -349,6 +355,7 @@ class _LogInSignInState extends State<LogInSignIn>
   sosharId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('intuserId', _socialsignin.id);
+    prefs.setInt('actid', _socialsignin.account);
   }
 emailfailed(){
   Fluttertoast.showToast(
@@ -411,7 +418,7 @@ fillall(){
 
                     // second tab [you can add an icon using the icon property]
                     Tab(
-                      text: 'Signin',
+                      text: 'Sign Up',
                     ),
                   ],
                 ),
@@ -502,7 +509,7 @@ fillall(){
                               ),
                             ),
                             onPressed: () {
-                              Navigator.of(context).pushNamed('/resetpassword');
+                              //Navigator.of(context).pushNamed('/resetpassword');
                             },
                             textColor: Colors.white,
                           ),
@@ -772,7 +779,7 @@ fillall(){
                                   textColor: Colors.white,
                                   color: Colors.green,
                                   child: Text(
-                                    "SIGNIN",
+                                    "SIGNUP",
                                     style: TextStyle(fontSize: 18),
                                   ),
                                   onPressed: () async {

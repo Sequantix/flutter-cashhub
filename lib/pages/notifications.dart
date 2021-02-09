@@ -75,14 +75,14 @@ class _NotificationsState extends State<Notifications> {
         ),
         actions: <Widget>[
 
-          IconButton(
-            icon: Icon(Icons.more_vert,
-              color: Colors.black,
-              size: 30,),
-            onPressed: () {
-              Navigator.of(context).pushReplacementNamed('/notifications');
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.more_vert,
+          //     color: Colors.black,
+          //     size: 30,),
+          //   onPressed: () {
+          //     Navigator.of(context).pushReplacementNamed('/notifications');
+          //   },
+          // ),
         ],
 
       ),

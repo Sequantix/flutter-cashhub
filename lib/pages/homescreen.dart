@@ -1,6 +1,9 @@
 import 'dart:io';
+import 'package:cashhub/ad_manager.dart';
 import 'package:cashhub/services/HomeService.dart';
 import 'package:cashhub/services/HomePageService.dart';
+import 'package:cashhub/services/priceDropService.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -24,8 +27,9 @@ class Mainpage extends StatefulWidget {
 class _MainpageState extends State<Mainpage> {
   String distotal="0";
   bool previSerch=false;
-
+  Pricedrops _pricedrops;
   Homedata _homedata;
+  var pdata;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final GoogleSignIn _gSignIn =new GoogleSignIn();
@@ -42,6 +46,7 @@ class _MainpageState extends State<Mainpage> {
   String ItemName;
   String usrName;
   String UsrEmail;
+  String actid;
 
   void _signOut()async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -56,6 +61,54 @@ class _MainpageState extends State<Mainpage> {
     await FacebookAuth.instance.logOut();
 
   }
+//adssection
+  // TODO: Add _interstitialAd
+  InterstitialAd _interstitialAd;
+
+  // TODO: Add _isInterstitialAdReady
+  bool _isInterstitialAdReady;
+
+
+  // TODO: Implement _loadInterstitialAd()
+  void _loadInterstitialAd() {
+    _interstitialAd.load();
+  }
+
+  // TODO: Implement _onInterstitialAdEvent()
+  void _onInterstitialAdEvent(MobileAdEvent event) {
+    switch (event) {
+      case MobileAdEvent.loaded:
+        _isInterstitialAdReady = true;
+        _interstitialAd.show();
+        break;
+      case MobileAdEvent.failedToLoad:
+        _isInterstitialAdReady = false;
+        print('Failed to load an interstitial ad');
+        break;
+      case MobileAdEvent.closed:
+        Navigator.of(context).pushNamed('/search');
+        print("ad closed");
+        break;
+      default:
+      // do nothing
+    }
+  }
+
+//adssection ends
+
+Future<Pricedrops> priceDrops() async{
+  final response = await http.get(
+      'https://cashhub-reader-web-dev.azurewebsites.net/api/CashHub/GetPricedrops');
+
+  print(response.body);
+  // if (response.statusCode == 200) {
+  final String responseString = response.body;
+
+  return pricedropsFromJson(responseString);
+  // } else {
+  // return null;
+  //}
+}
 
   Future<Homedata> getHomeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -66,7 +119,7 @@ class _MainpageState extends State<Mainpage> {
         'https://cashhub-reader-web-dev.azurewebsites.net/api/CashHub/GetData/' +
             stringValue);
 
-    print(response.body);
+   // print(response.body);
     // if (response.statusCode == 200) {
     final String responseString = response.body;
     return homedataFromJson(responseString);
@@ -79,6 +132,8 @@ getfname() async{
   //Return String
    usrName = prefs.getString('UserName');
   UsrEmail=prefs.getString('UserEmails');
+  actid=prefs.getString('actidd');
+  print(actid);
 
 }
   void initState() {
@@ -88,12 +143,32 @@ getfname() async{
     Future.delayed(Duration.zero, () {
       data = ModalRoute.of(context).settings.arguments;
       demodata();
+      pricedrp();
 getfname();
       initOnsignal();
       //getStringValuesSF();
     });
-  }
 
+    //adsinit
+    _isInterstitialAdReady = false;
+
+    // TODO: Initialize _interstitialAd
+    _interstitialAd = InterstitialAd(
+      adUnitId: AdManager.interstitialAdUnitId,
+      // adUnitId: 'ca-app-pub-6857391469887868/9102752210',
+      listener: _onInterstitialAdEvent,
+    );
+
+    //adsinit ends
+  }
+pricedrp() async{
+    final Pricedrops prdrp = await priceDrops();
+    setState(() {
+      setState(() {
+        _pricedrops = prdrp;
+      });
+    });
+}
   demodata() async {
     final Homedata homedat = await getHomeData();
 
@@ -142,7 +217,9 @@ if(_homedata==null){
   distotal="0";
 }else{
   distotal=(_homedata.disoct).toString();
+
 }
+
 
     //data = ModalRoute.of(context).settings.arguments;
     return Scaffold(
@@ -167,15 +244,22 @@ if(_homedata==null){
         ),
 
             ListTile(
-              title: Text("Help"),
+              title: Text("Contact Us"),
               onTap: () {
                 Navigator.of(context).pop();
               },
             ),
             ListTile(
-              title: Text("Select Plan"),
+              title: Text("Upgrade to Premium"),
               onTap: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacementNamed('/perim1');
+              },
+            ),
+            ListTile(
+              title: Text("Report a Problem"),
+              onTap: () {
+                Navigator.of(context).pushReplacementNamed('/reportbug');
+                //Navigator.of(context).pop();
               },
             ),
             ListTile(
@@ -191,7 +275,8 @@ if(_homedata==null){
               onTap: () {
                 Navigator.of(context).pop();
               },
-            )
+            ),
+
           ],
         ),
       ),
@@ -264,14 +349,99 @@ if(_homedata==null){
               GestureDetector(
                 child: Image.asset('assets/Snap.png', height: 90),
                 onTap: () {
-                  Navigator.of(context).pushReplacementNamed('/Mimages');
+                  //Navigator.of(context).pushReplacementNamed('/Mimages');
+//pop
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        elevation: 16,
+                        child: Container(
+                          height: 230.0,
+                          width: 330.0,
+                          child: ListView(
+                            children: <Widget>[
+                              SizedBox(height: 20),
+                              //Center(
+                              Padding(
+                                padding: const EdgeInsets.only(left: 15.0),
+                                child: Text(
+                                  "Add a Receipt",
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                      fontSize: 24,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              // ),
+                              SizedBox(height: 20),
+                              FlatButton(
+                                child: Text(
+                                  'Take a photo..',
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                onPressed: () {
+                                  // Navigator.of(context).pushReplacementNamed('/edgedetec');
+                                  Navigator.pushReplacementNamed(
+                                      context, '/crop',
+                                      arguments: {
+                                        'pickerCode': "0",
+                                      });
+                                  //Navigator.of(context).pop();
 
+                                  // picker.getImage(ImageSource.camera);
+                                },
+                                textColor: Colors.black,
+                              ),
+                              FlatButton(
+                                child: Text(
+                                  'Choose from Library..',
+                                  style: TextStyle(fontSize: 20),
+                                  textAlign: TextAlign.left,
+                                ),
+                                onPressed: () {
+                                  Navigator.pushReplacementNamed(
+                                      context, '/crop',
+                                      arguments: {
+                                        'pickerCode': "1",
+                                      });
+                                },
+                                textColor: Colors.black,
+                              ),
+                              FlatButton(
+                                child: Text(
+                                  'Click to add long Receipt..',
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pushReplacementNamed('/Mimages');
+                                  //Navigator.of(context).pop();
+
+                                  // picker.getImage(ImageSource.camera);
+                                },
+                                textColor: Colors.black,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                  //pop ends
                 },
               ),
               SizedBox(width: 90),
               GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pushNamed('/search');
+                    actid=="3"?
+                    Navigator.of(context).pushNamed('/search'):
+                    _loadInterstitialAd();
+                    //Navigator.of(context).pushNamed('/search');
                   },
                   child: Image.asset('assets/search.png', height: 90)),
             ]),
@@ -358,7 +528,7 @@ if(_homedata==null){
             Visibility(
               visible: _homedata==null?previSerch=false:previSerch=true,
               child: Row(children: <Widget>[
-                Text('Previous Receipts',
+                Text('Price Drops',
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
@@ -367,18 +537,21 @@ if(_homedata==null){
                 Container(
                   height: 1,
                   color: Colors.grey[500],
-                  child: Text('sadfafrtretertertertkhhhh'),
+                  child: Text('sadfafrtretertertertewewewewewewekhhhh'),
                 ),
               ]),
             ),
             SizedBox(height: 10),
-            _homedata == null
+            _pricedrops == null
                 ? Container()
-                :
+                : actid=="3"?
             Column(
               children: [
                 //if((_homedata.products).length>0)
-                for (int i = 0; i <_homedata.products.length; i++)
+                // for (int i = 0; i <_homedata.products.length; i++)
+
+               for (int i = 0; i <2; i++)
+               // for (int i = 0; i <_pricedrops.data.length; i++)
                    Card(
                           margin: EdgeInsets.all(12),
                           elevation: 8,
@@ -392,7 +565,7 @@ if(_homedata==null){
                                 Expanded(
                                     flex: 1,
                                     child: Icon(
-                                      Icons.receipt,
+                                      Icons.trending_down,
                                       size: 30,
                                       color: Colors.green,
                                     )),
@@ -407,49 +580,130 @@ if(_homedata==null){
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
                                           Text(
-                                              (_homedata.products[i].store)
+                                              (_pricedrops.data[i].merName)
                                                   .toString(),
                                               style: TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold)),
                                           SizedBox(height: 4),
                                           Text(
-                                              (_homedata.products[i].tdate)
+                                              (_pricedrops.data[i].proName)
                                                   .toString(),
                                               style: TextStyle(
                                                   color: Colors.black)),
                                           Text(
-                                              "\$" +
-                                                  (_homedata.products[i].pname)
+                                              "Price Dropped to \$" +
+                                                  (_pricedrops.data[i].currentPrice)
                                                       .toString(),
                                               style: TextStyle(
-                                                  color: Colors.black)),
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold)),
                                         ],
                                       ),
                                     ],
                                   ),
                                 ),
-                                Expanded(
-                                    flex: 1,
-                                    child: GestureDetector(
-    onTap: () {
-      Navigator.pushReplacementNamed(
-          context, '/hdetails',
-          arguments: {
-            'Storeid': _homedata.products[i].mid,
-          });
-    },
-                                      child: Icon(
-                                        Icons.arrow_forward_ios,
-                                        size: 30,
-
-                                      ),
-                                    ),
-                                ),
+    //                             Expanded(
+    //                                 flex: 1,
+    //                                 child: GestureDetector(
+    // onTap: () {
+    //   Navigator.pushReplacementNamed(
+    //       context, '/hdetails',
+    //       arguments: {
+    //         'Storeid': _homedata.products[i].mid,
+    //       });
+    // },
+    //                                   child: Icon(
+    //                                     Icons.arrow_forward_ios,
+    //                                     size: 30,
+    //
+    //                                   ),
+    //                                 ),
+    //                             ),
                               ],
                             ),
                           ),
                         ),
+              ],
+            ): Column(
+              children: [
+                //if((_homedata.products).length>0)
+                // for (int i = 0; i <_homedata.products.length; i++)
+
+                for (int i = 0; i <_pricedrops.data.length; i++)
+                // for (int i = 0; i <_pricedrops.data.length; i++)
+                  Card(
+                    margin: EdgeInsets.all(12),
+                    elevation: 8,
+                    //color: Color.fromRGBO(64, 75, 96, .9),
+
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15.0, horizontal: 16),
+                      child: Row(
+                        children: [
+                          Expanded(
+                              flex: 1,
+                              child: Icon(
+                                Icons.trending_down,
+                                size: 30,
+                                color: Colors.green,
+                              )),
+                          SizedBox(width: 10),
+                          Expanded(
+                            flex: 5,
+                            child: Row(
+                              children: <Widget>[
+                                Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(
+                                        (_pricedrops.data[i].merName)
+                                            .toString(),
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold)),
+                                    SizedBox(height: 4),
+                                    Text(
+                                        (_pricedrops.data[i].proName)
+                                            .toString(),
+                                        style: TextStyle(
+                                            color: Colors.black)),
+                                    Text(
+                                        "Price Dropped to \$" +
+                                            (_pricedrops.data[i].currentPrice)
+                                                .toString(),
+                                        style: TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          //                             Expanded(
+                          //                                 flex: 1,
+                          //                                 child: GestureDetector(
+                          // onTap: () {
+                          //   Navigator.pushReplacementNamed(
+                          //       context, '/hdetails',
+                          //       arguments: {
+                          //         'Storeid': _homedata.products[i].mid,
+                          //       });
+                          // },
+                          //                                   child: Icon(
+                          //                                     Icons.arrow_forward_ios,
+                          //                                     size: 30,
+                          //
+                          //                                   ),
+                          //                                 ),
+                          //                             ),
+                        ],
+                      ),
+                    ),
+                  ),
               ],
             ),
             // SizedBox(height: 20,),

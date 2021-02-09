@@ -32,9 +32,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   Widget getImageWidget() {
-    _gotImage=data['imageList'];
-    print(_gotImage.path);
-    if (data['imageList'] != null) {
+
+   // print(_gotImage.path);
+    if(data['imageList']==null && _selectedFile !=null){
+      _gotImage=_selectedFile;
+     // print(_gotImage.path);
+      return Image.file(
+        _gotImage,
+        width: 350,
+        height: 650,
+        fit: BoxFit.cover,
+      );
+    }
+    else if (data['imageList'] != null) {
+      _gotImage=data['imageList'];
       // ImagesMerge(
       //   data['imageList'],///required,images list
       //   direction: Axis.vertical,///direction
@@ -44,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // );
 
       return Image.file(
-        data['imageList'],
+        _gotImage,
         width: 350,
         height: 650,
         fit: BoxFit.cover,
@@ -65,28 +76,28 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     File image = await ImagePicker.pickImage(source: source);
     if(image != null){
-      File cropped = await ImageCropper.cropImage(
-          sourcePath: image.path,
-          maxWidth: 1080,
-          maxHeight: 1080,
-
-          compressFormat: ImageCompressFormat.jpg,
-          androidUiSettings: AndroidUiSettings(
-              toolbarColor: Colors.black,
-              toolbarWidgetColor: Colors.white,
-              //toolbarTitle: "RPS Cropper",
-              statusBarColor: Colors.deepOrange.shade900,
-              backgroundColor: Colors.black,
-              initAspectRatio: CropAspectRatioPreset.original,
-              lockAspectRatio: false
-          ),
-          iosUiSettings: IOSUiSettings(
-            minimumAspectRatio: 1.0,
-          )
-      );
+      // File cropped = await ImageCropper.cropImage(
+      //     sourcePath: image.path,
+      //     maxWidth: 1080,
+      //     maxHeight: 1080,
+      //
+      //     compressFormat: ImageCompressFormat.jpg,
+      //     androidUiSettings: AndroidUiSettings(
+      //         toolbarColor: Colors.black,
+      //         toolbarWidgetColor: Colors.white,
+      //         //toolbarTitle: "RPS Cropper",
+      //         statusBarColor: Colors.deepOrange.shade900,
+      //         backgroundColor: Colors.black,
+      //         initAspectRatio: CropAspectRatioPreset.original,
+      //         lockAspectRatio: false
+      //     ),
+      //     iosUiSettings: IOSUiSettings(
+      //       minimumAspectRatio: 1.0,
+      //     )
+      // );
 
       this.setState((){
-        _selectedFile = cropped;
+        _selectedFile = image;
         _inProcess = false;
       });
     } else {
@@ -103,21 +114,21 @@ class _MyHomePageState extends State<MyHomePage> {
 // print("test");
     Future.delayed(Duration.zero, () {
 
-      // data = ModalRoute.of(context).settings.arguments;
-      // //print(data);
-      // if(data['pickerCode']=="0"){
-      //   getImage(ImageSource.camera);
-      // }
-      // else{
-      //   getImage(ImageSource.gallery);
-      // }
+      data = ModalRoute.of(context).settings.arguments;
+      //print(data);
+      if(data['pickerCode']=="1"){
+        getImage(ImageSource.gallery);
+      }
+      else{
+        getImage(ImageSource.camera);
+      }
     });
   }
 
 
   Future<Readerservice> getImagedata() async {
     Dialogs.showLoadingDialog(context, _keyLoader);
-    final bytes = data['imageList'].readAsBytesSync();
+    final bytes = _gotImage.readAsBytesSync();
     String img64 = base64Encode(bytes);
 
 
@@ -137,6 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print(response.body);
       final String responseString = response.body;
       return readerserviceFromJson(responseString);
+
    } else {
       Navigator.of(_keyLoader.currentContext,rootNavigator: true).pop();
       Fluttertoast.showToast(
@@ -151,6 +163,9 @@ class _MyHomePageState extends State<MyHomePage> {
   checkimgStatus(){
 
     if(_readerservice.status == true){
+
+
+
       Navigator.of(_keyLoader.currentContext,rootNavigator: true).pop();
       Navigator.pushReplacementNamed(context, '/details',arguments: {
         'CompanyName':(_readerservice.merchantName).toString(),
@@ -160,7 +175,9 @@ class _MyHomePageState extends State<MyHomePage> {
         'items':(_readerservice.items).toList(),
         'imagess':_gotImage,
         'imagename':_gotImage.path.toString(),
+        'saveaction':'1',
       });
+
 
     }else{
       Navigator.of(_keyLoader.currentContext,rootNavigator: true).pop();
@@ -191,6 +208,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  SizedBox(height: 30,),
                   getImageWidget(),
                   // ImagesMerge(
                   //   data['imageList'],///required,images list
@@ -199,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   //   fit: false,///scale image to fit others
                   //   //controller: captureController,///controller to get screen shot
                   // ),
-                  SizedBox(height: 20,),
+                  SizedBox(height: 60,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
@@ -210,7 +228,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Text("Recapture",
                           style: TextStyle(fontSize: 15),),
                         onPressed: () {
-                           Navigator.of(context).pushReplacementNamed('/Mimages');
+                           Navigator.of(context).pushReplacementNamed('/Mainpage');
                           //blobdemo();
                         },
                         shape: new RoundedRectangleBorder(

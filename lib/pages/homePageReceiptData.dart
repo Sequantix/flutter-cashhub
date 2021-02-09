@@ -89,16 +89,16 @@ class _hdetailsState extends State<hdetails> {
           Text('Basic AppBar'),
         ]),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.more_vert,
-              color: Colors.black,
-              size: 30,
-            ),
-            onPressed: () {
-              print('Click start');
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(
+          //     Icons.more_vert,
+          //     color: Colors.black,
+          //     size: 30,
+          //   ),
+          //   onPressed: () {
+          //     print('Click start');
+          //   },
+          // ),
         ],
       ),
       body: _homePageStore==null?Container():SingleChildScrollView(

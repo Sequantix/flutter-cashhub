@@ -1,5 +1,10 @@
 import 'dart:async';
+
+import 'package:cashhub/ad_manager.dart';
 import 'package:cashhub/pages/LogInSignIn.dart';
+import 'package:cashhub/pages/bugreport.dart';
+import 'package:cashhub/pages/edge_detectn.dart';
+import 'package:cashhub/pages/premium_1.dart';
 import 'package:flutter/material.dart';
 import 'package:cashhub/pages/homescreen.dart';
 import 'package:cashhub/pages/search.dart';
@@ -18,6 +23,7 @@ import 'package:cashhub/pages/SearchReceiptdata.dart';
 import 'package:cashhub/pages/passwordreset.dart';
 import 'package:cashhub/pages/otppage.dart';
 import 'package:cashhub/pages/passwordupdate.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 void main() {
   setupLocator();
   runApp(new MaterialApp(
@@ -36,6 +42,9 @@ void main() {
       '/resetpassword':(BuildContext context)=> new Passwordreset(),
       '/otppage':(BuildContext context)=> new OtpPage(),
       '/updatepassword':(BuildContext context)=> new updatepassword(),
+      '/reportbug':(BuildContext context)=> new bugreport(),
+      '/edgedetec':(BuildContext context)=> new Edge_Det(),
+      '/perim1':(BuildContext context)=> new perium_1(),
     },
   ));
 }
@@ -59,7 +68,10 @@ class _SplashScreenState extends State<SplashScreen> {
     var _duration = new Duration(seconds: 4);
     return new Timer(_duration, navigationPage);
   }
-
+  Future<void> _initAdMob() {
+    // TODO: Initialize AdMob SDK
+    return FirebaseAdMob.instance.initialize(appId: AdManager.appId);
+  }
 
 
   Future<void> _authenticate() async {
@@ -142,7 +154,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
    // _authenticate();
-   
+    //_initAdMob();
     super.initState();
 
     startTime();

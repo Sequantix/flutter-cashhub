@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cashhub/services/HomeService.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -6,6 +7,7 @@ import 'package:cashhub/services/SearchServiceAzure.dart';
 import 'package:flutter/material.dart';
 import 'package:cashhub/main.dart';
 import 'package:cashhub/pages/loader.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class searchw extends StatefulWidget {
   @override
@@ -15,7 +17,7 @@ class searchw extends StatefulWidget {
 }
 
 class _searchwState extends State<searchw> {
-
+  Homedata _homedata;
   SearchService  _searchService;
   bool previSerch=false;
   TextEditingController Searchbox = new TextEditingController();
@@ -51,6 +53,44 @@ class _searchwState extends State<searchw> {
           timeInSecForIosWeb: 1);
     }
   }
+
+  Future<Homedata> getHomeData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return String
+    String stringValue = prefs.getString('userId');
+    print(stringValue);
+    final response = await http.get(
+        'https://cashhub-reader-web-dev.azurewebsites.net/api/CashHub/GetData/' +
+            stringValue);
+
+    print(response.body);
+    // if (response.statusCode == 200) {
+    final String responseString = response.body;
+    return homedataFromJson(responseString);
+    // } else {
+    return null;
+    //}
+  }
+  demodata() async {
+    final Homedata homedat = await getHomeData();
+
+    setState(() {
+      setState(() {
+        _homedata = homedat;
+      });
+    });
+    //getStringValuesSF();
+    //Navigator.pushNamed(context, '/details');
+  }
+  void initState() {
+    super.initState();
+//
+// print("test");
+    Future.delayed(Duration.zero, () {
+      demodata();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,14 +116,14 @@ class _searchwState extends State<searchw> {
         ),
         actions: <Widget>[
 
-          IconButton(
-            icon: Icon(Icons.more_vert,
-              color: Colors.black,
-              size: 30,),
-            onPressed: () {
-              print('Click start');
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.more_vert,
+          //     color: Colors.black,
+          //     size: 30,),
+          //   onPressed: () {
+          //     print('Click start');
+          //   },
+          // ),
         ],
 
       ),
@@ -115,7 +155,7 @@ class _searchwState extends State<searchw> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'You can search items by Date, Store Name, Product Name, SKU Number, UPC Number',
+                      'You can search items by Store Name, Product Name, SKU Number',
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 20),
@@ -198,7 +238,107 @@ class _searchwState extends State<searchw> {
                 SizedBox(height: 10),
 
                 _searchService == null
-                    ? Container():
+                    ? Column(
+                      children: [
+                        Visibility(
+                  visible: _homedata==null?previSerch=false:previSerch=true,
+                  child: Row(children: <Widget>[
+                        Text('Previous Receipts',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            )),
+                        Container(
+                          height: 1,
+                          color: Colors.grey[500],
+                          child: Text('sadfafrtretertertertkhhhh'),
+                        ),
+                  ]),
+                ),SizedBox(height: 10),
+                        _homedata == null
+                            ? Container()
+                            :
+                        Column(
+                          children: [
+                            //if((_homedata.products).length>0)
+                            for (int i = 0; i <_homedata.products.length; i++)
+                              Card(
+                                margin: EdgeInsets.all(12),
+                                elevation: 8,
+                                //color: Color.fromRGBO(64, 75, 96, .9),
+
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 15.0, horizontal: 16),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                          flex: 1,
+                                          child: Icon(
+                                            Icons.receipt,
+                                            size: 30,
+                                            color: Colors.green,
+                                          )),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        flex: 5,
+                                        child: Row(
+                                          children: <Widget>[
+                                            Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Text(
+                                                    (_homedata.products[i].store)
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight: FontWeight.bold)),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                    (_homedata.products[i].tdate)
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        color: Colors.black)),
+                                                Text(
+                                                    "\$" +
+                                                        (_homedata.products[i].pname)
+                                                            .toString(),
+                                                    style: TextStyle(
+                                                        color: Colors.black)),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.pushReplacementNamed(
+                                                context, '/hdetails',
+                                                arguments: {
+                                                  'Storeid': _homedata.products[i].mid,
+                                                });
+                                          },
+                                          child: Icon(
+                                            Icons.arrow_forward_ios,
+                                            size: 30,
+
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ):
+          //search data starts
                 Column(
                   children: [
                     for (int i = 0; i <_searchService.value.length; i++)
