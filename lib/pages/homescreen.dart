@@ -3,6 +3,7 @@ import 'package:cashhub/ad_manager.dart';
 import 'package:cashhub/services/HomeService.dart';
 import 'package:cashhub/services/HomePageService.dart';
 import 'package:cashhub/services/priceDropService.dart';
+import 'package:cron/cron.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -47,6 +48,17 @@ class _MainpageState extends State<Mainpage> {
   String usrName;
   String UsrEmail;
   String actid;
+
+
+
+  Future<void> main() async {
+    final cron = Cron()
+      ..schedule(Schedule.parse('01 12 * * *'), () {
+        _signOut();
+      });
+    await Future.delayed(Duration(seconds: 20));
+    await cron.close();
+  }
 
   void _signOut()async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -145,6 +157,7 @@ getfname() async{
       demodata();
       pricedrp();
 getfname();
+      main();
       initOnsignal();
       //getStringValuesSF();
     });
@@ -591,13 +604,42 @@ if(_homedata==null){
                                                   .toString(),
                                               style: TextStyle(
                                                   color: Colors.black)),
-                                          Text(
-                                              "Price Dropped to \$" +
-                                                  (_pricedrops.data[i].currentPrice)
-                                                      .toString(),
-                                              style: TextStyle(
-                                                  color: Colors.red,
-                                                  fontWeight: FontWeight.bold)),
+                                          SizedBox(height: 6,),
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.local_offer,
+                                                size: 15,
+                                                color: Colors.green,
+                                              ),
+                                              SizedBox(width: 6,),
+                                              Text(
+                                                  "Original Price    \$" +
+                                                      (_pricedrops.data[i].lastPrice)
+                                                          .toString(),
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.bold)),
+                                            ],
+                                          ),
+                                          SizedBox(height: 6,),
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.notifications,
+                                                size: 17,
+                                                color: Colors.red,
+                                              ),
+                                              SizedBox(width: 6,),
+                                              Text(
+                                                  "Notification       \$" +
+                                                      (_pricedrops.data[i].currentPrice)
+                                                          .toString(),
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.bold)),
+                                            ],
+                                          ),
                                         ],
                                       ),
                                     ],
@@ -660,24 +702,55 @@ if(_homedata==null){
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
                                     Text(
-                                        (_pricedrops.data[i].merName)
+                                        ("Upgrade to Premium to view the vendor")
                                             .toString(),
                                         style: TextStyle(
-                                            fontSize: 20,
+                                            // fontSize: 20,
                                             fontWeight: FontWeight.bold)),
                                     SizedBox(height: 4),
+
                                     Text(
                                         (_pricedrops.data[i].proName)
                                             .toString(),
                                         style: TextStyle(
                                             color: Colors.black)),
-                                    Text(
-                                        "Price Dropped to \$" +
-                                            (_pricedrops.data[i].currentPrice)
-                                                .toString(),
-                                        style: TextStyle(
-                                            color: Colors.red,
-                                            fontWeight: FontWeight.bold)),
+                                    SizedBox(height: 6,),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.local_offer,
+                                          size: 15,
+                                          color: Colors.green,
+                                        ),
+                                        SizedBox(width: 6,),
+                                        Text(
+                                            "Original Price    \$" +
+                                                (_pricedrops.data[i].lastPrice)
+                                                    .toString(),
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+                                    SizedBox(height: 6,),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.notifications,
+                                          size: 17,
+                                          color: Colors.red,
+                                        ),
+                                        SizedBox(width: 6,),
+                                        Text(
+                                            "Notification       \$" +
+                                                (_pricedrops.data[i].currentPrice)
+                                                    .toString(),
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+
                                   ],
                                 ),
                               ],
